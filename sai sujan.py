@@ -162,3 +162,89 @@ function App() {
 
 export default App;
 
+# meal_llm.py
+import openai
+
+def get_meal_plan(prompt, api_key):
+    openai.api_key = api_key
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        temperature=0.7,
+        messages=[
+            {"role": "system", "content": "You are a nutrition expert who creates healthy meal plans."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    return response.choices[0].message['content']
+
+def generate_recipe(meal_description, api_key):
+    prompt = f"Write a detailed, healthy recipe for: {meal_description}"
+    return get_meal_plan(prompt, api_key)
+
+def summarize_nutrition(recipe_text, api_key):
+    prompt = f"Summarize the nutrition macros and calories line by line for this recipe:\n{recipe_text}"
+    return get_meal_plan(prompt, api_key)
+
+from transformers import pipeline
+
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+def summarize_text(text):
+    return summarizer(text, max_length=100, min_length=10, do_sample=False)[0]['summary_text']
+
+
+# app.py
+import streamlit as st
+from meal_llm import get_meal_plan, generate_recipe, summarize_nutrition
+
+st.set_page_config(page_title="AI Meal Planner", page_icon="🍽️", layout="centered")
+st.title("Personalized AI Meal Planner 🍽️")
+
+# Profile intake
+with st.form("profile"):
+    st.header("Profile")
+    age = st.number_input("Age", min_value=13, max_value=90, step=1)
+    weight = st.number_input("Weight (kg)")
+    height = st.number_input("Height (cm)")
+    conditions = st.text_input("Health Conditions (comma separated, e.g., PCOD, Diabetes)")
+    allergies = st.text_input("Allergies/intolerances (comma separated)")
+    submitted = st.form_submit_button("Save Profile")
+
+# Preferences
+st.header("Preferences")
+diet = st.selectbox("Diet type", ["Vegetarian", "Vegan", "Keto", "No preference"])
+cuisine = st.multiselect("Cuisine preference", ["Indian", "Mediterranean", "Italian", "Chinese", "Global"])
+fasting = st.selectbox("Fasting mode", ["None", "Intermittent", "OMAD", "Custom"])
+
+# Pantry
+st.header("Your Pantry")
+pantry_items = st.text_area("List your available ingredients (comma separated)")
+
+# Generate Meal Plan
+if st.button("Generate My Meal Plan"):
+    prompt = f"""
+    User Profile: Age {age}, Weight {weight}kg, Height {height}cm, Conditions: {conditions}, Allergies: {allergies}.
+    Preferences: Diet {diet}, Cuisines {', '.join(cuisine)}, Fasting: {fasting}.
+    Pantry: {pantry_items}.
+
+    Generate 3 meals + 2 snacks. Each meal must fit health and allergen restrictions, use pantry, and respect preferences.
+    Provide a summary (dish name, brief description, macros).
+    """
+    # Replace with your own OpenAI key/secure storage in production
+    api_key = "YOUR_OPENAI_KEY"
+    meal_plan = get_meal_plan(prompt, api_key)
+    st.markdown(meal_plan)
+    st.success("Meal plan generated!")
+
+# Select Meal for Recipe & Macro Breakdown
+selected_meal = st.text_input("Copy-paste a meal name from above to get full recipe")
+if selected_meal:
+    api_key = "YOUR_OPENAI_KEY"
+    recipe = generate_recipe(selected_meal, api_key)
+    st.subheader("Recipe")
+    st.markdown(recipe)
+
+    nutrition = summarize_nutrition(recipe, api_key)
+    st.subheader("Nutrition Info")
+    st.markdown(nutrition)
+
+
