@@ -1,0 +1,16 @@
+PROJECT_DIETTLY/
+│
+├── backend/
+│    ├── main.py
+│    ├── models.py
+│    ├── requirements.txt
+│
+├── diettly-frontend/
+│    ├── src/
+│    │    └── App.js
+│    ├── package.json
+│    └── ...
+│
+├── app.py         # (optional, if you want the Streamlit interface)
+├── README.md
+└── .gitignore
