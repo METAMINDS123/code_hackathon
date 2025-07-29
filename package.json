@@ -1,0 +1,46 @@
+{
+  "name": "diettly-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+  }
+}
+
+
+#Optional: Proxy to Backend (for CORS** when using fetch)
+If your backend runs on localhost:8000, and React on localhost:3000, you can add this line to package.json to make API calls easie
+
+#"proxy": "http://localhost:8000",
+
+
+#How to Use in VSCode
+Place this package.json at the root of your React frontend/project folder (the same place as your /src folder).
+
+Open VSCode terminal, run:
+
+#npm install
+#This will install all dependencies.
+
+Start your React app:
+
+text
+npm start
