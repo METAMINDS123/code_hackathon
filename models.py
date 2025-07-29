@@ -42,4 +42,5 @@ class BlinkitOrderRequest(BaseModel):
 
 
 #how to use 
+#In your main.py, import these models like this:
 from models import UserProfile, Preferences, Pantry, MealPlanRequest, Meal, MealPlanResponse, BlinkitOrderRequest
